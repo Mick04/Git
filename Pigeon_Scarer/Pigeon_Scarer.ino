@@ -9,12 +9,19 @@
 
 char ssid[] = "Gimp";
 char password[] = "FC7KUNPX";
-int led_pin = D5;
-   
+
+// constants won't change. They're used here to set pin numbers:
+const int Motion_Sensor_Pin = D1;     // the number of the pushbutton pin
+const int led_Pin =  D5;      // the number of the LED pin
+
+// variables will change:
+
+int Motion_Sensor_state = 0;         // variable for reading the Motion-Sensor status 
 
 void setup() {
-  pinMode(led_pin, OUTPUT);
-  
+  pinMode(led_Pin, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(Motion_Sensor_Pin, INPUT);
   Serial.begin(115200);
   Serial.println("Booting");
   WiFi.mode(WIFI_STA);
@@ -59,10 +66,23 @@ void setup() {
 
 void loop() {
   ArduinoOTA.handle();
-   digitalWrite(led_pin, LOW);   // Turn the LED on (Note that LOW is the voltage level
-  // but actually the LED is on; this is because
-  // it is active low on the ESP-01)
-  delay(1000);                      // Wait for a second
-  digitalWrite(led_pin, HIGH);  // Turn the LED off by making the voltage HIGH
-  delay(1000); 
+  Motion_Sensor();
+}
+
+void Motion_Sensor(){
+    // read the state of the  value:
+  Motion_Sensor_state = digitalRead(Motion_Sensor_Pin);
+  Serial.println(Motion_Sensor_state);
+
+  // check if the Motion-Sensor as detected any movement. If it as, the buttonState is HIGH:
+  if (Motion_Sensor_state == LOW) {
+    // turn LED on:
+    digitalWrite(led_Pin, HIGH);
+    digitalWrite(LED_BUILTIN, LOW);
+  }
+  else if (Motion_Sensor_state == HIGH){
+    // turn LED off:
+    digitalWrite(led_Pin, LOW);
+    digitalWrite(LED_BUILTIN, HIGH);
+  }
 }
