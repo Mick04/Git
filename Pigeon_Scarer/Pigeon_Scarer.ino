@@ -5,13 +5,14 @@
 #include <ESP8266mDNS.h>
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
+#include <BlynkSimpleEsp8266.h>
 
-
-
+BlynkTimer timer;
 // Your WiFi credentials.
 
+char auth[] = "575b164c97e04d2992b73d9beedaa519";
 char ssid[] = "Gimp";
-char password[] = "FC7KUNPX";
+char pass[] = "FC7KUNPX";
 
 // constants won't change. They're used here to set pin numbers:
 const int Motion_Sensor_Pin = D1;     // the number of the pushbutton pin
@@ -33,6 +34,7 @@ void setup() {
     Serial.println("Connection Failed! Rebooting...");
     delay(5000);
     ESP.restart();
+    Blynk.begin(auth, ssid, pass);
     
   }
   
