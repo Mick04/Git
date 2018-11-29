@@ -23,8 +23,8 @@ BLYNK_CONNECTED() {
 
 char ssid[] = "Gimp_EXT";
 char password[] = "FC7KUNPX";
-
-char auth[] = "2267c1c3b15c41cab120a4be091cef47";//active board
+char auth[] = "2e4c0de2d1164f8780448f5ed58325bb";//rework
+//char auth[] = "2267c1c3b15c41cab120a4be091cef47";//active board
 
 byte i;
 byte present = 0;
