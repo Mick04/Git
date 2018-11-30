@@ -1,6 +1,7 @@
+#include <Time.h>
+#include <TimeLib.h>
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
-#include <TimeLib.h>
 #include <WidgetRTC.h>
 #include <OneWire.h>
 #include <ESP8266mDNS.h>
@@ -162,8 +163,9 @@ BLYNK_WRITE(V9){
 void sendSensor()
 {
   
-
-
+ Serial.println(now());
+ Serial.println(hour());
+ Serial.println(year());
    /**************************
     *    DS18B20 Sensor      * 
     *      Starts Here       *
@@ -228,15 +230,22 @@ void sendSensor()
  ************************************************************/
  
   celsius = (float)raw / 16.0;
-  //if(adr == 228)  {        //Other Side
-  if(adr == 89)  {        // active board Other Side   
+  if(adr == 228)  {        //Other Side
+  //if(adr == 89)  {        // active board Other Side   
     s1 = (celsius);          
 
   }
-  //if(adr == 197)  {        //Heater Control
-  if(adr == 96)  {        //active board  Heater Control
+  if(adr == 197)  {        //Heater Control
+  //if(adr == 96)  {        //active board  Heater Control
     s2 = (celsius);           //change celsius to fahrenheit if you prefer output in Fahrenheit;
-    Am = isAM();
+    Serial.print("Line 239     ");
+    Serial.print("s2  ");
+    Serial.println(s2);
+    Am = false;
+   // Am = isAM();
+     Serial.print("Line 243     ");
+    Serial.print("hour()  ");
+    Serial.println(hour());
     if(Am == true){
       if(Day_Hours == hour()){  //set LowTemp for the Night time setting
         if (Day_Minutes >= minute() && Day_Minutes <= minute()){
@@ -244,6 +253,7 @@ void sendSensor()
           Blynk.setProperty(V6, "color","#00FF00");
           Blynk.setProperty(V9, "color","#00FF00");
           VirtualPin = V6;
+           Serial.print("Line 254     ");
         }
       }
     }
@@ -254,12 +264,16 @@ void sendSensor()
           Blynk.setProperty(V6, "color","#00FF00");
           Blynk.setProperty(V9, "color","#00FF00");
           VirtualPin = V9;
+          Serial.print("Line 265     ");
+          Serial.print("LowTemp  ");
+          Serial.println(LowTemp);
+          
         }
       }
     }
   }
-  //if(adr == 92)  {    //Out Side
-  if(adr == 116)  {    //active board Out Side
+  if(adr == 92)  {    //Out Side
+  //if(adr == 116)  {    //active board Out Side
     s3 = (celsius);
   }
   relay_Control();//call relay_Control function
@@ -333,7 +347,7 @@ void setup() {
   Serial.println("Ready");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
- 
+ Serial.println(hour());
   timer.setInterval(500, sendSensor);
 
 }
