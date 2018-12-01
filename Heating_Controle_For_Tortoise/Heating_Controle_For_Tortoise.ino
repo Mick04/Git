@@ -50,8 +50,8 @@ int Night_Settngs;
 int VirtualPin;
 bool Am;
 bool Reset = V3;
-double temp, hum;
-
+double temp;
+bool power = 0;
  /*************************************************************
  *                           Relay Control                    *
  *                                start                       *
@@ -72,7 +72,6 @@ void relay_Control(){
   }
     if (Am == false){
       if(s2 < LowTemp){
-        Serial.print("  s2 < LowTemp  ");
         Blynk.setProperty(V11, "color","#FF0000");
         Blynk.setProperty(VirtualPin, "color","#FF0000");
         digitalWrite (Relay_Pin, HIGH);
@@ -89,6 +88,35 @@ void relay_Control(){
  *                           Relay Control                    *
  *                                End                         *
  *************************************************************/
+
+/**************************************
+ * rewrite slides if power goes off   *
+ *           start                    *
+ *************************************/
+void re_boot(){
+  Day_Hours = 7;
+  Day_Minutes = 15;
+  Day_Settings = 8;
+  Night_Hours = 19;
+  Night_Minutes = 15;
+  Night_Settngs = 8;
+  LowTemp = 7;
+  Am = isAM();
+  Blynk.virtualWrite(V3, 0);
+  Blynk.setProperty(V3, "color","#3700FD");
+  Blynk.virtualWrite(V4, Day_Hours);
+  Blynk.virtualWrite(V5, Day_Minutes);
+  Blynk.virtualWrite(V6, Day_Settings);
+  Blynk.virtualWrite(V7, Night_Hours);
+  Blynk.virtualWrite(V8, Night_Minutes);
+  Blynk.virtualWrite(V9, Night_Settngs);
+  
+}
+
+ /**************************************
+ * rewrite slides if power goes off   *
+ *           end                      *
+ *************************************/
 
   /*************************************************************
  * Look For Changes to the Sliders On the settings Tab        *  
@@ -162,10 +190,11 @@ BLYNK_WRITE(V9){
 
 void sendSensor()
 {
-  
- Serial.println(now());
- Serial.println(hour());
- Serial.println(year());
+  if (power == 0) {
+ re_boot();
+ power=1;
+ Reset = 0;
+}
    /**************************
     *    DS18B20 Sensor      * 
     *      Starts Here       *
@@ -238,14 +267,7 @@ void sendSensor()
   if(adr == 197)  {        //Heater Control
   //if(adr == 96)  {        //active board  Heater Control
     s2 = (celsius);           //change celsius to fahrenheit if you prefer output in Fahrenheit;
-    Serial.print("Line 239     ");
-    Serial.print("s2  ");
-    Serial.println(s2);
-    Am = false;
-   // Am = isAM();
-     Serial.print("Line 243     ");
-    Serial.print("hour()  ");
-    Serial.println(hour());
+    Am = isAM();
     if(Am == true){
       if(Day_Hours == hour()){  //set LowTemp for the Night time setting
         if (Day_Minutes >= minute() && Day_Minutes <= minute()){
@@ -253,8 +275,7 @@ void sendSensor()
           Blynk.setProperty(V6, "color","#00FF00");
           Blynk.setProperty(V9, "color","#00FF00");
           VirtualPin = V6;
-           Serial.print("Line 254     ");
-        }
+          }
       }
     }
     if(Am == false){
@@ -264,10 +285,6 @@ void sendSensor()
           Blynk.setProperty(V6, "color","#00FF00");
           Blynk.setProperty(V9, "color","#00FF00");
           VirtualPin = V9;
-          Serial.print("Line 265     ");
-          Serial.print("LowTemp  ");
-          Serial.println(LowTemp);
-          
         }
       }
     }
@@ -289,7 +306,6 @@ void sendSensor()
   else if(Am == false){
     Blynk.virtualWrite(V1, "PM");
   }
- 
   Blynk.virtualWrite(V2, LowTemp +1);
   Blynk.virtualWrite(V4, Day_Hours);
   Blynk.virtualWrite(V5, Day_Minutes);
@@ -348,6 +364,9 @@ void setup() {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
  Serial.println(hour());
+
+
+ 
   timer.setInterval(500, sendSensor);
 
 }
