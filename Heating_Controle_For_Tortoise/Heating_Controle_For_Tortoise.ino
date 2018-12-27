@@ -9,7 +9,7 @@
 #include <ArduinoOTA.h>
 
 #define Relay_Pin D5//active board
-
+#define LED_Pin D6//LED_Pin
 OneWire  ds(D7);//active board  // on pin 10 (a 4.7K resistor is necessary)
 //WidgetLED led1(V1);
 WidgetRTC rtc;
@@ -63,11 +63,13 @@ void relay_Control(){
       Blynk.setProperty(V11, "color","#FF0000");
       Blynk.setProperty(VirtualPin, "color","#FF0000");
       digitalWrite (Relay_Pin, HIGH);
+      digitalWrite (LED_Pin, HIGH);//LED_Pin on
     }
     else if (s2 > LowTemp){
       Blynk.setProperty(V11, "color","#00FF00");
       Blynk.setProperty(VirtualPin, "color","#00FF00");
       digitalWrite (Relay_Pin, LOW);
+      digitalWrite (LED_Pin, LOW);//LED_Pin off
     }
   }
     if (Am == false){
@@ -75,11 +77,13 @@ void relay_Control(){
         Blynk.setProperty(V11, "color","#FF0000");
         Blynk.setProperty(VirtualPin, "color","#FF0000");
         digitalWrite (Relay_Pin, HIGH);
+        digitalWrite (LED_Pin, HIGH);//LED_Pin on
       }
       else if (s2 > LowTemp){
         Blynk.setProperty(V11, "color","#00FF00");
         Blynk.setProperty(VirtualPin, "color","#00FF00");
         digitalWrite (Relay_Pin, LOW);
+        digitalWrite (LED_Pin, LOW);//LED_Pin off
       }
     }
 
@@ -199,6 +203,7 @@ void sendSensor()
     *    DS18B20 Sensor      * 
     *      Starts Here       *
     **************************/
+
 
   if ( !ds.search(addr)) {
     ds.reset_search();
@@ -322,6 +327,7 @@ void sendSensor()
 
 void setup() {
   pinMode(Relay_Pin, OUTPUT);
+  pinMode(LED_Pin, OUTPUT);//digitalWrite (LED_Pin, LOW);//LED_Pin off
   Serial.begin(115200);
   Serial.println("Booting");
   WiFi.mode(WIFI_STA);
@@ -332,7 +338,6 @@ void setup() {
     ESP.restart();
     
   }
-  
   Blynk.begin(auth, ssid, password);// See the connection status in Serial Monitor
 
   ArduinoOTA.onStart([]() {
