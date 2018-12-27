@@ -16,7 +16,8 @@ WidgetRTC rtc;
 BlynkTimer timer;
 
 BLYNK_CONNECTED() {
-  // Synchronize time on connection
+  /*
+  // Synchronize time on connection */
   rtc.begin();
 }
 
