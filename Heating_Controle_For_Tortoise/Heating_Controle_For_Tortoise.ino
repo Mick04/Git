@@ -19,6 +19,7 @@ BLYNK_CONNECTED() {
   /*
   // Synchronize time on connection */
   rtc.begin();
+
 }
 
 // Your WiFi credentials.
@@ -95,32 +96,36 @@ void relay_Control(){
  *************************************************************/
 
 /**************************************
- * rewrite slides if power goes off   *
- *           start                    *
+ *     rewrite slides on startup      *
+ *                                    *
  *************************************/
 void re_boot(){
-  Day_Hours = 7;
-  Day_Minutes = 15;
-  Day_Settings = 8;
-  Night_Hours = 19;
-  Night_Minutes = 15;
-  Night_Settngs = 8;
-  LowTemp = 7;
   Am = isAM();
-  Blynk.virtualWrite(V3, 0);
-  Blynk.setProperty(V3, "color","#3700FD");
-  Blynk.virtualWrite(V4, Day_Hours);
-  Blynk.virtualWrite(V5, Day_Minutes);
-  Blynk.virtualWrite(V6, Day_Settings);
-  Blynk.virtualWrite(V7, Night_Hours);
-  Blynk.virtualWrite(V8, Night_Minutes);
-  Blynk.virtualWrite(V9, Night_Settngs);
+  if (Am == true){
+     Day_Hours = hour();
+     Day_Minutes = minute();
+     Night_Hours = 19;
+     Night_Minutes = 15;
+  }
+  else if(Am == false){
+    Night_Hours = hour();
+    Night_Minutes = minute();
+    Day_Hours = 7;
+    Day_Minutes = 15;
+  }
+  Day_Settings = 25;
+  DayHighTemp = Day_Settings;
+  Night_Settngs = 25;
+  NightHighTemp = Night_Settngs;
+  LowTemp = 7;
+Blynk.email("mac5y4@talktalk.net", "Subject: reset Tortoise Heater", "there as been a power cut you need to reset the sliders");
+Serial.print("line 122   email   ");
   
 }
 
  /**************************************
- * rewrite slides if power goes off   *
- *           end                      *
+ *     rewrite slides on startup       *
+ *                                     *
  *************************************/
 
   /*************************************************************
@@ -183,7 +188,13 @@ BLYNK_WRITE(V9){
     NightHighTemp = Night_Settngs;
     Blynk.virtualWrite(V9, Night_Settngs);
     Blynk.setProperty(V9, "color","#00FF00");
-  }
+             /////////////////////////////////////
+    //            for debuging        //
+    ////////////////////////////////////   
+    Serial.print("line 204 Night_Settngs   ");
+    Serial.println(Night_Settngs);
+    }
+    
 }
 
 
@@ -291,6 +302,13 @@ void sendSensor()
           Blynk.setProperty(V6, "color","#00FF00");
           Blynk.setProperty(V9, "color","#00FF00");
           VirtualPin = V9;
+          /////////////////////////////////////
+    //            for debuging        //
+    //////////////////////////////////// 
+    Serial.print("line 308 NightHighTemp   ");
+    Serial.println(NightHighTemp);  
+    Serial.print("line 308 LowTemp   ");
+    Serial.println(LowTemp);
         }
       }
     }
@@ -319,6 +337,11 @@ void sendSensor()
   Blynk.virtualWrite(V7, Night_Hours);
   Blynk.virtualWrite(V8, Night_Minutes);
   Blynk.virtualWrite(V9, Night_Settngs);
+           /////////////////////////////////////
+    //            for debuging        //
+    ////////////////////////////////////   
+    Serial.print("line LowTemp   ");
+    Serial.println(LowTemp);
   Blynk.virtualWrite(V10, s1);
   Blynk.virtualWrite(V11, s2);
   Blynk.virtualWrite(V12, s3);
