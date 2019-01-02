@@ -188,11 +188,6 @@ BLYNK_WRITE(V9){
     NightHighTemp = Night_Settngs;
     Blynk.virtualWrite(V9, Night_Settngs);
     Blynk.setProperty(V9, "color","#00FF00");
-             /////////////////////////////////////
-    //            for debuging        //
-    ////////////////////////////////////   
-    Serial.print("line 204 Night_Settngs   ");
-    Serial.println(Night_Settngs);
     }
     
 }
@@ -302,13 +297,6 @@ void sendSensor()
           Blynk.setProperty(V6, "color","#00FF00");
           Blynk.setProperty(V9, "color","#00FF00");
           VirtualPin = V9;
-          /////////////////////////////////////
-    //            for debuging        //
-    //////////////////////////////////// 
-    Serial.print("line 308 NightHighTemp   ");
-    Serial.println(NightHighTemp);  
-    Serial.print("line 308 LowTemp   ");
-    Serial.println(LowTemp);
         }
       }
     }
@@ -337,11 +325,6 @@ void sendSensor()
   Blynk.virtualWrite(V7, Night_Hours);
   Blynk.virtualWrite(V8, Night_Minutes);
   Blynk.virtualWrite(V9, Night_Settngs);
-           /////////////////////////////////////
-    //            for debuging        //
-    ////////////////////////////////////   
-    Serial.print("line LowTemp   ");
-    Serial.println(LowTemp);
   Blynk.virtualWrite(V10, s1);
   Blynk.virtualWrite(V11, s2);
   Blynk.virtualWrite(V12, s3);
