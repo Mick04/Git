@@ -26,8 +26,8 @@ BLYNK_CONNECTED() {
 
 char ssid[] = "Gimp_EXT";
 char password[] = "FC7KUNPX";
-char auth[] = "2e4c0de2d1164f8780448f5ed58325bb";//insid board
-//char auth[] = "2267c1c3b15c41cab120a4be091cef47";//outside board
+//char auth[] = "2e4c0de2d1164f8780448f5ed58325bb";//insid board
+char auth[] = "2267c1c3b15c41cab120a4be091cef47";//outside board
 
 byte i;
 byte present = 0;
@@ -271,13 +271,13 @@ void sendSensor()
  ************************************************************/
  
   celsius = (float)raw / 16.0;
-  if(adr == 228)  {        //inside board Other Side
-  //if(adr == 89)  {        //outside board Other Side   
+  //if(adr == 228)  {        //inside board Other Side
+  if(adr == 89)  {        //outside board Other Side   
     s1 = (celsius);          
 
   }
-  if(adr == 197)  {        //inside boade Heater Control
-  //if(adr == 96)  {        //out side board  Heater Control
+  //if(adr == 197)  {        //inside boade Heater Control
+  if(adr == 96)  {        //out side board  Heater Control
     s2 = (celsius);           //change celsius to fahrenheit if you prefer output in Fahrenheit;
     Am = isAM();
     if(Am == true){
@@ -301,8 +301,8 @@ void sendSensor()
       }
     }
   }
-  if(adr == 92)  {    //inside board Out Side
-  //if(adr == 116)  {    // outside board Out Side
+  //if(adr == 92)  {    //inside board Out Side
+  if(adr == 116)  {    // outside board Out Side
     s3 = (celsius);
   }
   relay_Control();//call relay_Control function
