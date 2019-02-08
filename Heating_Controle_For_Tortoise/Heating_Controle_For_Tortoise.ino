@@ -18,7 +18,10 @@ BlynkTimer timer;
 BLYNK_CONNECTED() {
   /*
   // Synchronize time on connection */
+  Blynk.syncVirtual(V2,V4, V5, V6,V7,V8,V9);
+  Blynk.email("mac5y4@talktalk.net", "Subject: reset Tortoise Heater", "there as been a power cut you need to reset the sliders");
   rtc.begin();
+
 
 }
 
@@ -26,8 +29,8 @@ BLYNK_CONNECTED() {
 
 char ssid[] = "Gimp_EXT";
 char password[] = "FC7KUNPX";
-//char auth[] = "2e4c0de2d1164f8780448f5ed58325bb";//insid board
-char auth[] = "2267c1c3b15c41cab120a4be091cef47";//outside board
+char auth[] = "2e4c0de2d1164f8780448f5ed58325bb";//insid board
+//char auth[] = "2267c1c3b15c41cab120a4be091cef47";//outside board
 
 byte i;
 byte present = 0;
@@ -100,7 +103,12 @@ void relay_Control(){
  *                                    *
  *************************************/
 void re_boot(){
-  Am = isAM();
+    BLYNK_WRITE(V2)
+{
+  LowTemp = param.asInt(); // get the low temp value from the display widget
+  LowTemp =LowTemp -1 // Not sure if this is needed, but you're writing LowTemp +1 to this in sendSensor()
+}
+/*  Am = isAM();
   if (Am == true){
      Day_Hours = hour();
      Day_Minutes = minute();
@@ -108,10 +116,10 @@ void re_boot(){
      Night_Minutes = 15;
   }
   else if(Am == false){
-    Night_Hours = hour();
-    Night_Minutes = minute();
-    Day_Hours = 7;
-    Day_Minutes = 15;
+    re_set_Hours = hour();
+    re_set_Minutes = minute();
+    //Day_Hours = 7;
+    //Day_Minutes = 15;
   }
   Day_Settings = 20;//inside Board
   Day_Settings = 8;//outside Board
@@ -119,8 +127,8 @@ void re_boot(){
   Night_Settngs = 20;//inside Board
   Night_Settngs = 8;//outside Board
   NightHighTemp = Night_Settngs;
-  LowTemp = 7;
-Blynk.email("mac5y4@talktalk.net", "Subject: reset Tortoise Heater", "there as been a power cut you need to reset the sliders");
+  LowTemp = 7;*/
+
 }
 
  /**************************************
@@ -200,12 +208,12 @@ BLYNK_WRITE(V9){
  *************************************************************/
 
 void sendSensor()
-{
+{/*
   if (power == 0) {
  re_boot();
  power=1;
  Reset = 0;
-}
+}*/
    /**************************
     *    DS18B20 Sensor      * 
     *      Starts Here       *
@@ -271,13 +279,12 @@ void sendSensor()
  ************************************************************/
  
   celsius = (float)raw / 16.0;
-  //if(adr == 228)  {        //inside board Other Side
-  if(adr == 89)  {        //outside board Other Side   
+  if(adr == 228)  {        //inside board Other Side
+  //if(adr == 89)  {        //outside board Other Side   
     s1 = (celsius);          
-
   }
-  //if(adr == 197)  {        //inside boade Heater Control
-  if(adr == 96)  {        //out side board  Heater Control
+  if(adr == 197)  {        //inside boade Heater Control
+  //if(adr == 96)  {        //out side board  Heater Control
     s2 = (celsius);           //change celsius to fahrenheit if you prefer output in Fahrenheit;
     Am = isAM();
     if(Am == true){
@@ -301,8 +308,8 @@ void sendSensor()
       }
     }
   }
-  //if(adr == 92)  {    //inside board Out Side
-  if(adr == 116)  {    // outside board Out Side
+  if(adr == 92)  {    //inside board Out Side
+  //if(adr == 116)  {    // outside board Out Side
     s3 = (celsius);
   }
   relay_Control();//call relay_Control function
