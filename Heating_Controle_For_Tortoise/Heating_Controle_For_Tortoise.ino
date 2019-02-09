@@ -98,45 +98,7 @@ void relay_Control(){
  *                                End                         *
  *************************************************************/
 
-/**************************************
- *     rewrite slides on startup      *
- *                                    *
- *************************************/
-void re_boot(){
-    BLYNK_WRITE(V2)
-{
-  LowTemp = param.asInt(); // get the low temp value from the display widget
-  LowTemp =LowTemp -1 // Not sure if this is needed, but you're writing LowTemp +1 to this in sendSensor()
-}
-/*  Am = isAM();
-  if (Am == true){
-     Day_Hours = hour();
-     Day_Minutes = minute();
-     Night_Hours = 19;
-     Night_Minutes = 15;
-  }
-  else if(Am == false){
-    re_set_Hours = hour();
-    re_set_Minutes = minute();
-    //Day_Hours = 7;
-    //Day_Minutes = 15;
-  }
-  Day_Settings = 20;//inside Board
-  Day_Settings = 8;//outside Board
-  DayHighTemp = Day_Settings;
-  Night_Settngs = 20;//inside Board
-  Night_Settngs = 8;//outside Board
-  NightHighTemp = Night_Settngs;
-  LowTemp = 7;*/
-
-}
-
- /**************************************
- *     rewrite slides on startup       *
- *                                     *
- *************************************/
-
-  /*************************************************************
+ /*************************************************************
  * Look For Changes to the Sliders On the settings Tab        *  
  *                          in the Blynk App                  *
  *                                start                       *
@@ -153,6 +115,11 @@ BLYNK_WRITE(V3)
     }
 
 }
+ /*   BLYNK_WRITE(V2)
+{
+  LowTemp = param.asInt(); // get the low temp value from the display widget
+ // LowTemp =LowTemp -1 // Not sure if this is needed, but you're writing LowTemp +1 to this in sendSensor()
+}*/
   
 
 BLYNK_WRITE(V4){
@@ -173,6 +140,9 @@ BLYNK_WRITE(V6){
   if (Reset == 1){
     Day_Settings = param.asInt(); // assigning incoming value from pin V6 to a variable
     DayHighTemp = Day_Settings;
+    if (power == 0) {
+    LowTemp = param.asInt(); // get the low temp value from the display widget
+    }
     Blynk.virtualWrite(V6, Day_Settings);
     Blynk.setProperty(V6, "color","#00FF00");
   }
@@ -194,6 +164,9 @@ BLYNK_WRITE(V9){
   if (Reset == 1){
     Night_Settngs = param.asInt(); // assigning incoming value from pin V9 to a variable
     NightHighTemp = Night_Settngs;
+    if (power == 0) {
+    LowTemp = param.asInt(); // get the low temp value from the display widget
+    }
     Blynk.virtualWrite(V9, Night_Settngs);
     Blynk.setProperty(V9, "color","#00FF00");
     }
@@ -208,12 +181,11 @@ BLYNK_WRITE(V9){
  *************************************************************/
 
 void sendSensor()
-{/*
+{
   if (power == 0) {
- re_boot();
- power=1;
- Reset = 0;
-}*/
+    Reset = 0;
+    power = 1;
+}
    /**************************
     *    DS18B20 Sensor      * 
     *      Starts Here       *
