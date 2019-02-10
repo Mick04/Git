@@ -57,46 +57,7 @@ bool Am;
 bool Reset = V3;
 double temp;
 bool power = 0;
- /*************************************************************
- *                           Relay Control                    *
- *                                start                       *
- *************************************************************/
 
-void relay_Control(){
-  if (Am == true){
-    if(s2 < LowTemp){
-      Blynk.setProperty(V11, "color","#FF0000");
-      Blynk.setProperty(VirtualPin, "color","#FF0000");
-      digitalWrite (Relay_Pin, HIGH);
-      digitalWrite (LED_Pin, HIGH);//LED_Pin on
-    }
-    else if (s2 > LowTemp){
-      Blynk.setProperty(V11, "color","#00FF00");
-      Blynk.setProperty(VirtualPin, "color","#00FF00");
-      digitalWrite (Relay_Pin, LOW);
-      digitalWrite (LED_Pin, LOW);//LED_Pin off
-    }
-  }
-    if (Am == false){
-      if(s2 < LowTemp){
-        Blynk.setProperty(V11, "color","#FF0000");
-        Blynk.setProperty(VirtualPin, "color","#FF0000");
-        digitalWrite (Relay_Pin, HIGH);
-        digitalWrite (LED_Pin, HIGH);//LED_Pin on
-      }
-      else if (s2 > LowTemp){
-        Blynk.setProperty(V11, "color","#00FF00");
-        Blynk.setProperty(VirtualPin, "color","#00FF00");
-        digitalWrite (Relay_Pin, LOW);
-        digitalWrite (LED_Pin, LOW);//LED_Pin off
-      }
-    }
-
-}
- /*************************************************************
- *                           Relay Control                    *
- *                                End                         *
- *************************************************************/
 
  /*************************************************************
  * Look For Changes to the Sliders On the settings Tab        *  
@@ -115,12 +76,6 @@ BLYNK_WRITE(V3)
     }
 
 }
- /*   BLYNK_WRITE(V2)
-{
-  LowTemp = param.asInt(); // get the low temp value from the display widget
- // LowTemp =LowTemp -1 // Not sure if this is needed, but you're writing LowTemp +1 to this in sendSensor()
-}*/
-  
 
 BLYNK_WRITE(V4){
   if (Reset == 1){
@@ -179,6 +134,105 @@ BLYNK_WRITE(V9){
  *                          in the Blynk App                  *
  *                                End                         *
  *************************************************************/
+
+
+void setup() {
+  pinMode(Relay_Pin, OUTPUT);
+  pinMode(LED_Pin, OUTPUT);//digitalWrite (LED_Pin, LOW);//LED_Pin off
+  Serial.begin(115200);
+  Serial.println("Booting");
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+  while (WiFi.waitForConnectResult() != WL_CONNECTED) {
+    Serial.println("Connection Failed! Rebooting...");
+    delay(5000);
+    ESP.restart();
+    
+  }
+  Blynk.begin(auth, ssid, password);// See the connection status in Serial Monitor
+
+  ArduinoOTA.onStart([]() {
+    String type;
+    if (ArduinoOTA.getCommand() == U_FLASH)
+      type = "sketch";
+    else // U_SPIFFS
+      type = "filesystem";
+
+    // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
+    Serial.println("Start updating " + type);
+  });
+  ArduinoOTA.onEnd([]() {
+    Serial.println("\nEnd");
+  });
+  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
+    Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+  });
+  ArduinoOTA.onError([](ota_error_t error) {
+    Serial.printf("Error[%u]: ", error);
+    if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
+    else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
+    else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
+    else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
+    else if (error == OTA_END_ERROR) Serial.println("End Failed");
+  });
+  ArduinoOTA.begin();
+  Serial.println("Ready");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+ Serial.println(hour());
+
+
+ 
+  timer.setInterval(500, sendSensor);
+
+}
+
+void loop() {
+  ArduinoOTA.handle();
+  Blynk.run();
+  timer.run();
+}
+ /*************************************************************
+ *                           Relay Control                    *
+ *                                start                       *
+ *************************************************************/
+
+void relay_Control(){
+  if (Am == true){
+    if(s2 < LowTemp){
+      Blynk.setProperty(V11, "color","#FF0000");
+      Blynk.setProperty(VirtualPin, "color","#FF0000");
+      digitalWrite (Relay_Pin, HIGH);
+      digitalWrite (LED_Pin, HIGH);//LED_Pin on
+    }
+    else if (s2 > LowTemp){
+      Blynk.setProperty(V11, "color","#00FF00");
+      Blynk.setProperty(VirtualPin, "color","#00FF00");
+      digitalWrite (Relay_Pin, LOW);
+      digitalWrite (LED_Pin, LOW);//LED_Pin off
+    }
+  }
+    if (Am == false){
+      if(s2 < LowTemp){
+        Blynk.setProperty(V11, "color","#FF0000");
+        Blynk.setProperty(VirtualPin, "color","#FF0000");
+        digitalWrite (Relay_Pin, HIGH);
+        digitalWrite (LED_Pin, HIGH);//LED_Pin on
+      }
+      else if (s2 > LowTemp){
+        Blynk.setProperty(V11, "color","#00FF00");
+        Blynk.setProperty(VirtualPin, "color","#00FF00");
+        digitalWrite (Relay_Pin, LOW);
+        digitalWrite (LED_Pin, LOW);//LED_Pin off
+      }
+    }
+
+}
+ /*************************************************************
+ *                           Relay Control                    *
+ *                                End                         *
+ *************************************************************/
+
 
 void sendSensor()
 {
@@ -310,60 +364,3 @@ void sendSensor()
   Blynk.setProperty(V13, "color","#00FF00");
   Blynk.virtualWrite(V13, s2);
 }    
-
-void setup() {
-  pinMode(Relay_Pin, OUTPUT);
-  pinMode(LED_Pin, OUTPUT);//digitalWrite (LED_Pin, LOW);//LED_Pin off
-  Serial.begin(115200);
-  Serial.println("Booting");
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-  while (WiFi.waitForConnectResult() != WL_CONNECTED) {
-    Serial.println("Connection Failed! Rebooting...");
-    delay(5000);
-    ESP.restart();
-    
-  }
-  Blynk.begin(auth, ssid, password);// See the connection status in Serial Monitor
-
-  ArduinoOTA.onStart([]() {
-    String type;
-    if (ArduinoOTA.getCommand() == U_FLASH)
-      type = "sketch";
-    else // U_SPIFFS
-      type = "filesystem";
-
-    // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
-    Serial.println("Start updating " + type);
-  });
-  ArduinoOTA.onEnd([]() {
-    Serial.println("\nEnd");
-  });
-  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-    Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-  });
-  ArduinoOTA.onError([](ota_error_t error) {
-    Serial.printf("Error[%u]: ", error);
-    if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
-    else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
-    else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
-    else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
-    else if (error == OTA_END_ERROR) Serial.println("End Failed");
-  });
-  ArduinoOTA.begin();
-  Serial.println("Ready");
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
- Serial.println(hour());
-
-
- 
-  timer.setInterval(500, sendSensor);
-
-}
-
-void loop() {
-  ArduinoOTA.handle();
-  Blynk.run();
-  timer.run();
-}
