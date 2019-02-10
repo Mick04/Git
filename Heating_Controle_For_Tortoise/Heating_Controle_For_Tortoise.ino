@@ -316,7 +316,7 @@ void sendSensor()
     if(Am == true){
       if(Day_Hours == hour()){  //set LowTemp for the Night time setting
         if (Day_Minutes >= minute() && Day_Minutes <= minute()){
-          LowTemp = DayHighTemp -1;
+          LowTemp = DayHighTemp;
           Blynk.setProperty(V6, "color","#00FF00");
           Blynk.setProperty(V9, "color","#00FF00");
           VirtualPin = V6;
@@ -326,7 +326,7 @@ void sendSensor()
     if(Am == false){
       if(Night_Hours == hour()){  //set LowTemp for the Night time setting
         if(Night_Minutes >= minute()&& Night_Minutes <= minute()+5){
-          LowTemp = NightHighTemp -1;
+          LowTemp = NightHighTemp;
           Blynk.setProperty(V6, "color","#00FF00");
           Blynk.setProperty(V9, "color","#00FF00");
           VirtualPin = V9;
@@ -351,7 +351,7 @@ void sendSensor()
   else if(Am == false){
     Blynk.virtualWrite(V1, "PM");
   }
-  Blynk.virtualWrite(V2, LowTemp +1);
+  Blynk.virtualWrite(V2, LowTemp);
   Blynk.virtualWrite(V4, Day_Hours);
   Blynk.virtualWrite(V5, Day_Minutes);
   Blynk.virtualWrite(V6, Day_Settings);
