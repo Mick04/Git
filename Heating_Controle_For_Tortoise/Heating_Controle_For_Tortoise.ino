@@ -19,17 +19,18 @@ BLYNK_CONNECTED() {
   /*
   // Synchronize time on connection */
   Blynk.syncVirtual(V2,V4, V5, V6,V7,V8,V9);
+  Blynk.email("mac5y4@talktalk.net", "Subject: reset inside Tortoise Heater", "there as been a power cut you need to reset the sliders");
    rtc.begin();
 
 
 }
 
 // Your WiFi credentials.
-
-char ssid[] = "Gimp";
+char ssid[] = "Gimp_EXT";//outside board
+//char ssid[] = "Gimp";//inside board
 char password[] = "FC7KUNPX";
-char auth[] = "2e4c0de2d1164f8780448f5ed58325bb";//insid board
-//char auth[] = "2267c1c3b15c41cab120a4be091cef47";//outside board
+//char auth[] = "2e4c0de2d1164f8780448f5ed58325bb";//insid board
+char auth[] = "2267c1c3b15c41cab120a4be091cef47";//outside board
 
 byte i;
 byte present = 0;
@@ -238,7 +239,6 @@ void sendSensor()
   if (power == 0) {
     Reset = 0;
     power = 1;
-    Blynk.email("mac5y4@talktalk.net", "Subject: reset inside Tortoise Heater", "there as been a power cut you need to reset the sliders");
 }
    /**************************
     *    DS18B20 Sensor      * 
