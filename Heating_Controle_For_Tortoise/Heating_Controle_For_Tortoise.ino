@@ -45,7 +45,6 @@ int adr;
 int DayHighTemp;
 int NightHighTemp;
 int LowTemp;
-int Days;
 int Day_Hours;
 int Day_Minutes;
 int Day_Settings;
@@ -55,7 +54,6 @@ int Night_Settngs;
 int VirtualPin;
 bool Am;
 bool Reset = V3;
-double temp;
 bool power = 0;
 
 
