@@ -7,7 +7,7 @@
 
 // Based on the OneWire library example
 
-OneWire ds(15);  //data wire connected to GPIO15
+OneWire ds(D5);  //data wire connected to GPIO15
 
 void setup(void) {
   Serial.begin(9600);
@@ -27,6 +27,6 @@ void loop(void) {
   Serial.print(" ROM =");
   for (i = 0; i < 8; i++) {
     Serial.write(' ');
-    Serial.print(addr[i], HEX);
+    Serial.print(addr[i], DEC);
   }
 }
